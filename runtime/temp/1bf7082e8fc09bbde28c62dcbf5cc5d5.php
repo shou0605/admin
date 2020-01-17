@@ -1,0 +1,146 @@
+<?php /*a:1:{s:72:"D:\phpStudy\PHPTutorial\WWW\blog\application\admin\view\login\index.html";i:1578577363;}*/ ?>
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+
+<head>
+
+    <meta charset="utf-8">
+    <title>Fullscreen Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/admin/login/css/reset.css">
+    <link rel="stylesheet" href="/static/admin/login/css/supersized.css">
+    <link rel="stylesheet" href="/static/admin/login/css/style.css">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <style >
+        .web_name {bottom:50px; position:fixed; opacity:0; left:0%; -webkit-transform:translateX(-50%); -moz-transform:translateX(-50%); -ms-transform:translateX(-50%); transform:translateX(-50%);}
+        .page-container{margin-top: 200px;}
+    </style>
+</head>
+
+<body>
+
+<div class="page-container">
+    <h1>Login</h1>
+    <form action="" method="post"  id="thisForm">
+        <input type="text" name="username" class="username" placeholder="Username">
+        <input type="password" name="password" class="password" placeholder="Password">
+        <button type="submit">登录</button>
+        <div class="error"><span>+</span></div>
+    </form>
+    <div class="web_name connect" >
+        <p>测试</p>
+    </div>
+</div>
+
+<!-- Javascript -->
+<script type="text/javascript" src="/static/admin/login/js/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="/static/admin/login/js/supersized.3.2.7.min.js"></script>
+<script type="text/javascript" src="/static/admin/login/js/scripts.js"></script>
+<script type="text/javascript" src="/static/admin/login/js/tool.js"></script>
+<script type="text/javascript">
+    /**背景图加载**/
+    jQuery(function($){
+        $.supersized({
+
+            // Functionality
+            slide_interval     : 4000,    // Length between transitions
+            transition         : 1,    // 0-None, 1-Fade, 2-Slide Top, 3-Slide Right, 4-Slide Bottom, 5-Slide Left, 6-Carousel Right, 7-Carousel Left
+            transition_speed   : 1000,    // Speed of transition
+            performance        : 1,    // 0-Normal, 1-Hybrid speed/quality, 2-Optimizes image quality, 3-Optimizes transition speed // (Only works for Firefox/IE, not Webkit)
+
+            // Size & Position
+            min_width          : 0,    // Min width allowed (in pixels)
+            min_height         : 0,    // Min height allowed (in pixels)
+            vertical_center    : 1,    // Vertically center background
+            horizontal_center  : 1,    // Horizontally center background
+            fit_always         : 0,    // Image will never exceed browser width or height (Ignores min. dimensions)
+            fit_portrait       : 1,    // Portrait images will not exceed browser height
+            fit_landscape      : 0,    // Landscape images will not exceed browser width
+
+            // Components
+            slide_links        : 'blank',    // Individual links for each slide (Options: false, 'num', 'name', 'blank')
+            slides             : [    // Slideshow Images
+                {image : '/static/admin/login/img/backgrounds/1.jpg'},
+                {image : '/static/admin/login/img/backgrounds/2.jpg'},
+                {image : '/static/admin/login/img/backgrounds/3.jpg'}
+            ]
+
+        });
+
+    });
+
+
+    /**背景图加载**/
+    $(function () {
+        //输入框有内容时清除X标记
+        $('.page-container form').find('.username,.password').keyup(function(e){
+            $('.page-container form').find('.error').fadeOut('fast');
+        });
+        //打开字滑入效果
+        page.webMove();
+        //表单提交事件
+        $('#thisForm').on('submit',page.login);
+    });
+
+
+    var page = {
+        webMove: function () {
+            $(".web_name").delay(1000).animate({
+                "left": "50%",
+                'opacity': '1'
+            }, 600).delay(3000).animate({"left": "100%", 'opacity': '0'}, 600, function () {
+                $(".web_name").css({"left": "0%", 'opacity': '0'});
+                page.webMove();
+            });
+        },
+        login : function() {
+
+            var thisForm = $(this);
+            //输入框无内容时显示X标记
+            if (thisForm.find('.username').val() == '') {
+                thisForm.find('.error').fadeOut('fast', function () {
+                    $(this).css('top', '27px');
+                });
+                thisForm.find('.error').fadeIn('fast', function () {
+                    thisForm.find('.username').focus();
+                });
+                return false;
+            }
+            if (thisForm.find('.password').val() == '') {
+                thisForm.find('.error').fadeOut('fast', function () {
+                    $(this).css('top', '96px');
+                });
+                thisForm.find('.error').fadeIn('fast', function () {
+                    thisForm.find('.password').focus();
+                });
+                return false;
+            }
+            //提交表单
+            $.post(thisForm.attr("action"), thisForm.serialize(), function (data, status) {
+                if (status == 'success') {
+                    tool.inform({
+                        msg: data.msg,
+                        callback: function () {
+                            if (data.code == 1) window.location.href = data.data.url;
+                        }
+                    });
+                }
+            }, 'json');
+            return false;
+        }
+    }
+
+
+</script>
+</body>
+
+</html>
+

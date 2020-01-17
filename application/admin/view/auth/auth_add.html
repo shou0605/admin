@@ -1,0 +1,106 @@
+<!--包含头部文件-->
+{include file="public/header" /}
+<body>
+<div class="page-container">
+    <form action="#" id="myinfoup" method="POST" class="form form-horizontal" role="form" >
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>权限组名：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder=""   name="title">
+            </div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">简介：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder=""   name="description">
+            </div>
+        </div>
+
+
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">权限：</label>
+            <div class="formControls col-xs-8 col-sm-9"  style="border: 1px solid #ccc">
+                {:htmlspecialchars_decode($auth)}
+            </div>
+        </div>
+
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+                <button  type="submit" class="btn btn-primary radius myinfobt" ><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+
+                <button onclick="layer_close()"  class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+<!--包含尾部文件-->
+{include file="public/footer" /}
+<script>
+    /**全选**/
+    function SelectAll(obj) {
+        $(':checkbox').each(function (index) {
+            this.checked = obj.checked;
+        });
+    }
+
+    $(".formControls>div :checkbox").change(function(){
+        var obj = $(this).is(":checked");//判断是否选中
+        var div_class = 'div_' + $(this).val();//拼接div的clss
+        if($('div').hasClass(div_class)){
+            div_class = '.' + div_class + ' :checkbox';
+            $(div_class).each(function (index) {
+                this.checked = obj;//赋值
+            });
+        }
+    })
+
+    /**表单提交**/
+    $("#myinfoup").validate({
+        rules:{
+            title:{
+                required:true,
+                maxlength:20
+            },
+
+        },
+        onkeyup:false,
+        focusCleanup:true,
+        success:"valid",
+        submitHandler:function(form){
+            var formData = new FormData($( "#myinfoup" )[0]);
+
+            $.ajax({
+                url: "{:url('auth_add')}" ,  /*这是处理文件上传的servlet*/
+                type: 'POST',
+                data: formData,
+                async: false,
+                cache: false,
+                contentType: false,
+                processData: false,
+                dataType:"json",
+                success: function (returndata) {
+                    var msg = returndata.message;
+                    if(returndata.statusCode==200){
+
+                        layer.msg(msg, {
+                            icon: 1,
+                            time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                        }, function(){
+                            parent.location.reload();//刷新父页面
+                            layer_close()
+                        });
+
+                    }else{
+                        layer.msg(msg,{icon:2});
+                    }
+                },
+                error: function (returndata) {
+                    layer.msg('请稍后再试 网络有延迟！',{icon:2});
+                }
+            });
+            return false;
+        }
+    });
+</script>
